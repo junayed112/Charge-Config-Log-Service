@@ -1,5 +1,6 @@
 package com.operator.charge_config.service.impl;
 
+import com.operator.charge_config.enumeration.InboxStatus;
 import com.operator.charge_config.model.ChargeFailureLog;
 import com.operator.charge_config.model.ChargeSuccessLog;
 import com.operator.charge_config.model.Inbox;
@@ -17,17 +18,23 @@ public class ChargeFailureLogServiceImpl implements ChargeFailureLogService {
     @Autowired
     private InboxService inboxService;
 
+
     @Override
     public ChargeFailureLog save(Inbox inbox) {
-        ChargeFailureLog chargeFailureLog = new ChargeFailureLog();
-        chargeFailureLog.setGameName(inbox.getGameName());
-        chargeFailureLog.setMsisdn(inbox.getMsisdn());
-        chargeFailureLog.setKeyword(inbox.getKeyword());
-        chargeFailureLog.setOperator(inbox.getOperator());
-        chargeFailureLog.setSmsId(inbox.getId());
-        chargeFailureLog.setShortCode(inbox.getShortCode());
-        chargeFailureLog.setTransactionId(inbox.getTransactionId());
-        inboxService.updateStatus(inbox, "F");
+        ChargeFailureLog chargeFailureLog = mapInboxToChargeFailureLog(inbox);
+        inboxService.updateStatus(inbox, InboxStatus.FAILED.getCode());
         return chargeFailureLogRepository.save(chargeFailureLog);
+    }
+
+    private ChargeFailureLog mapInboxToChargeFailureLog(Inbox inbox) {
+        return ChargeFailureLog.builder()
+                .gameName(inbox.getGameName())
+                .msisdn(inbox.getMsisdn())
+                .keyword(inbox.getKeyword())
+                .operator(inbox.getOperator())
+                .smsId(inbox.getId())
+                .shortCode(inbox.getShortCode())
+                .transactionId(inbox.getTransactionId())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.operator.charge_config.service.impl;
 
+import com.operator.charge_config.exception.OperatorNotFoundException;
 import com.operator.charge_config.model.ChargeConfig;
 import com.operator.charge_config.repository.ChargeConfigRepository;
 import com.operator.charge_config.service.ChargeConfigService;
@@ -14,6 +15,7 @@ public class ChargeConfigServiceImpl implements ChargeConfigService {
 
     @Override
     public ChargeConfig findByOperator(String operator) {
-        return chargeConfigRepository.findByOperator(operator).get();
+        return chargeConfigRepository.findByOperator(operator)
+                .orElseThrow(() -> new OperatorNotFoundException(operator + " Operator Not Found"));
     }
 }

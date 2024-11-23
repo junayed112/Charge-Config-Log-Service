@@ -1,5 +1,7 @@
 package com.operator.charge_config.external;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.operator.charge_config.base.BaseResponse;
 import com.operator.charge_config.dto.request.ServiceChargeRequestDto;
 import com.operator.charge_config.dto.request.UnlockCodeRequestDto;
@@ -28,6 +30,9 @@ public class Gateway {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     public List<Contents> getContents(){
         String url = new StringBuilder(baseUrl)
                 .append(contentRetrievalEndpoint).toString();
@@ -35,8 +40,10 @@ public class Gateway {
         map.add("Content-Type","application/json");
 
         BaseResponse baseResponse = apiClient.get(url, map, BaseResponse.class).block();
-        List<Contents> contentsList = modelMapper.map(baseResponse.getContents(), List.class);
-        return contentsList;
+//        List<Contents> contentsList = modelMapper.map(baseResponse.getContents(), List.class);
+//        return contentsList;
+        return objectMapper.convertValue(baseResponse.getContents(), new TypeReference<List<Contents>>() {});
+
     }
 
     public UnlockCodeResponse unlockCode(UnlockCodeRequestDto unlockCodeRequestDto){

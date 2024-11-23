@@ -1,5 +1,6 @@
 package com.operator.charge_config.service.impl;
 
+import com.operator.charge_config.enumeration.InboxStatus;
 import com.operator.charge_config.model.Inbox;
 import com.operator.charge_config.repository.InboxRepository;
 import com.operator.charge_config.service.InboxService;
@@ -15,15 +16,7 @@ public class InboxServiceImpl implements InboxService {
 
     @Override
     public Inbox save(Contents contents, String keyword, String gameName) {
-        Inbox inbox = new Inbox();
-        inbox.setKeyword(keyword);
-        inbox.setGameName(gameName);
-        inbox.setSms(contents.getSms());
-        inbox.setMsisdn(inbox.getMsisdn());
-        inbox.setStatus("N");
-        inbox.setShortCode(contents.getShortCode());
-        inbox.setTransactionId(contents.getTransactionId());
-        inbox.setOperator(contents.getOperator());
+        Inbox inbox = mapContentsToInbox(contents, keyword, gameName);
         return inboxRepository.save(inbox);
     }
 
@@ -38,4 +31,16 @@ public class InboxServiceImpl implements InboxService {
         inboxRepository.save(inbox);
     }
 
+    private Inbox mapContentsToInbox(Contents contents, String keyword, String gameName) {
+        return Inbox.builder()
+                .keyword(keyword)
+                .gameName(gameName)
+                .sms(contents.getSms())
+                .msisdn(contents.getMsisdn())
+                .status(InboxStatus.NEW.getCode())
+                .shortCode(contents.getShortCode())
+                .transactionId(contents.getTransactionId())
+                .operator(contents.getOperator())
+                .build();
+    }
 }

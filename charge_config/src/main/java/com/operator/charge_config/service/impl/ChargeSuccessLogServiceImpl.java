@@ -1,5 +1,6 @@
 package com.operator.charge_config.service.impl;
 
+import com.operator.charge_config.enumeration.InboxStatus;
 import com.operator.charge_config.model.ChargeSuccessLog;
 import com.operator.charge_config.model.Inbox;
 import com.operator.charge_config.repository.ChargeSuccessLogRepository;
@@ -13,19 +14,27 @@ public class ChargeSuccessLogServiceImpl implements ChargeSuccessLogService {
 
     @Autowired
     private InboxService inboxService;
+
     @Autowired
     private ChargeSuccessLogRepository chargeSuccessLogRepository;
+
+
     @Override
     public ChargeSuccessLog save(Inbox inbox) {
-        ChargeSuccessLog chargeSuccessLog = new ChargeSuccessLog();
-        chargeSuccessLog.setGameName(inbox.getGameName());
-        chargeSuccessLog.setMsisdn(inbox.getMsisdn());
-        chargeSuccessLog.setKeyword(inbox.getKeyword());
-        chargeSuccessLog.setOperator(inbox.getOperator());
-        chargeSuccessLog.setSmsId(inbox.getId());
-        chargeSuccessLog.setShortCode(inbox.getShortCode());
-        chargeSuccessLog.setTransactionId(inbox.getTransactionId());
-        inboxService.updateStatus(inbox, "S");
+        ChargeSuccessLog chargeSuccessLog = mapInboxToChargeSuccessLog(inbox);
+        inboxService.updateStatus(inbox, InboxStatus.SUCCESS.getCode());
         return chargeSuccessLogRepository.save(chargeSuccessLog);
+    }
+
+    private ChargeSuccessLog mapInboxToChargeSuccessLog(Inbox inbox) {
+        return ChargeSuccessLog.builder()
+                .gameName(inbox.getGameName())
+                .msisdn(inbox.getMsisdn())
+                .keyword(inbox.getKeyword())
+                .operator(inbox.getOperator())
+                .smsId(inbox.getId())
+                .shortCode(inbox.getShortCode())
+                .transactionId(inbox.getTransactionId())
+                .build();
     }
 }
