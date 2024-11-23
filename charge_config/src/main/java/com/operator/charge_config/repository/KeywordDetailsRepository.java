@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface KeywordDetailsRepository extends JpaRepository<KeywordDetails, Long> {
+    Boolean existsByKeyword(String keyword);
 }

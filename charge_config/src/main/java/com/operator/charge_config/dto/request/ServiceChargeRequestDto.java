@@ -17,5 +17,5 @@ public class ServiceChargeRequestDto {
 
     private String msisdn;
 
-    private String keyword;
+    private String chargeCode;
 }

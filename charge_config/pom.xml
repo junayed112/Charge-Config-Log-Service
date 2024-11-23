@@ -54,7 +54,46 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.1</version>
+		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>dev</build.profile.id>
+				<profileActive>dev</profileActive>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>prod</id>
+			<properties>
+				<build.properties.id>prod</build.properties.id>
+				<profileActtive>prod</profileActtive>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>stage</id>
+			<properties>
+				<build.properties.id>stage</build.properties.id>
+				<profileActtive>stage</profileActtive>
+			</properties>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ChargeFailureLog extends BaseEntity {
 
     @Column(name = "sms_id", nullable = false)
-    private String smsId;
+    private Long smsId;
 
     @Column(name = "transaction_id", nullable = false)
     private String transactionId;
