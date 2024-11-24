@@ -1,5 +1,6 @@
 package com.operator.charge_config.service.impl;
 
+import com.operator.charge_config.base.ApiResponse;
 import com.operator.charge_config.enumeration.InboxStatus;
 import com.operator.charge_config.model.Inbox;
 import com.operator.charge_config.repository.InboxRepository;

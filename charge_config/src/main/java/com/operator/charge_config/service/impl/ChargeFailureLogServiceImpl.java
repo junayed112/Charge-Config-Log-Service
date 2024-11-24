@@ -1,5 +1,6 @@
 package com.operator.charge_config.service.impl;
 
+import com.operator.charge_config.base.ApiResponse;
 import com.operator.charge_config.enumeration.InboxStatus;
 import com.operator.charge_config.model.ChargeFailureLog;
 import com.operator.charge_config.model.ChargeSuccessLog;
@@ -20,13 +21,13 @@ public class ChargeFailureLogServiceImpl implements ChargeFailureLogService {
 
 
     @Override
-    public ChargeFailureLog save(Inbox inbox) {
-        ChargeFailureLog chargeFailureLog = mapInboxToChargeFailureLog(inbox);
+    public ChargeFailureLog save(Inbox inbox, ApiResponse apiResponse) {
+        ChargeFailureLog chargeFailureLog = mapInboxToChargeFailureLog(inbox, apiResponse);
         inboxService.updateStatus(inbox, InboxStatus.FAILED.getCode());
         return chargeFailureLogRepository.save(chargeFailureLog);
     }
 
-    private ChargeFailureLog mapInboxToChargeFailureLog(Inbox inbox) {
+    private ChargeFailureLog mapInboxToChargeFailureLog(Inbox inbox, ApiResponse apiResponse) {
         return ChargeFailureLog.builder()
                 .gameName(inbox.getGameName())
                 .msisdn(inbox.getMsisdn())
@@ -35,6 +36,8 @@ public class ChargeFailureLogServiceImpl implements ChargeFailureLogService {
                 .smsId(inbox.getId())
                 .shortCode(inbox.getShortCode())
                 .transactionId(inbox.getTransactionId())
+                .statusCode(apiResponse.getStatusCode())
+                .message(apiResponse.getMessage())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.operator.charge_config.external;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.operator.charge_config.base.ApiResponse;
 import com.operator.charge_config.base.BaseResponse;
 import com.operator.charge_config.dto.request.ServiceChargeRequestDto;
 import com.operator.charge_config.dto.request.UnlockCodeRequestDto;
@@ -53,16 +54,18 @@ public class Gateway {
         map.add("Content-Type","application/json");
 
         UnlockCodeResponse unlockCodeResponse = apiClient.post(url, map,unlockCodeRequestDto ,UnlockCodeResponse.class).block();
+        System.out.println("UnlockResponse : "+unlockCodeResponse.toString());
         return unlockCodeResponse;
     }
 
-    public ServiceChargeResponse performCharging(ServiceChargeRequestDto serviceChargeRequestDto){
+    public ApiResponse performCharging(ServiceChargeRequestDto serviceChargeRequestDto){
         String url = new StringBuilder(baseUrl)
                 .append(chargingEndpoint).toString();
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("Content-Type","application/json");
 
-        ServiceChargeResponse serviceChargeResponse = apiClient.post(url, map,serviceChargeRequestDto ,ServiceChargeResponse.class).block();
+        ApiResponse serviceChargeResponse = apiClient.post(url, map,serviceChargeRequestDto ,ApiResponse.class).block();
+        System.out.println("ServiceChargeResponse: " + serviceChargeResponse);
         return serviceChargeResponse;
     }
 

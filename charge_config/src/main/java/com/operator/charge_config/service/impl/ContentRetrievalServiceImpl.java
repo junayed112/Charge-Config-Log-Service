@@ -1,5 +1,6 @@
 package com.operator.charge_config.service.impl;
 
+import com.operator.charge_config.base.ApiResponse;
 import com.operator.charge_config.dto.request.ServiceChargeRequestDto;
 import com.operator.charge_config.dto.request.UnlockCodeRequestDto;
 import com.operator.charge_config.dto.response.ServiceChargeResponse;
@@ -41,7 +42,7 @@ public class ContentRetrievalServiceImpl implements ContentRetrievalService {
 
     @Override
     public void retrieveContents() {
-        System.out.println("Starting content retrieval process using virtual threads...");
+        System.out.println("Starting content retrieval process using virtual threads : "+ Thread.currentThread());
         List<Contents> contentsList = gatewayService.getContents();
         for (Contents content : contentsList) {
             String sms = content.getSms().trim();
@@ -54,7 +55,7 @@ public class ContentRetrievalServiceImpl implements ContentRetrievalService {
         System.out.println("Process ended");
     }
 
-    private void processContent(Contents content, String keyword, String gameName) {
+    private synchronized void processContent(Contents content, String keyword, String gameName) {
         try {
             System.out.println("Enter for processing contents");
             Inbox inbox = inboxService.save(content, keyword, gameName);
@@ -65,14 +66,14 @@ public class ContentRetrievalServiceImpl implements ContentRetrievalService {
 
                 ChargeConfig chargeConfig = chargeConfigService.findByOperator(unlockCodeResponse.getOperator());
                 ServiceChargeRequestDto serviceChargeRequestDto = buildServiceChargeRequest(unlockCodeResponse, chargeConfig.getChargeCode());
-                ServiceChargeResponse serviceChargeResponse = gatewayService.performCharging(serviceChargeRequestDto);
+                ApiResponse serviceChargeResponse = gatewayService.performCharging(serviceChargeRequestDto);
 
-                if (serviceChargeResponse.getStatusCode().equals(200)) {
+                if (serviceChargeResponse.getStatusCode() == 200) {
                     System.out.println("Success log");
                     chargeSuccessLogService.save(inbox);
                 } else {
                     System.out.println("Failure log");
-                    chargeFailureLogService.save(inbox);
+                    chargeFailureLogService.save(inbox, serviceChargeResponse);
                 }
             }
         } catch (Exception e) {

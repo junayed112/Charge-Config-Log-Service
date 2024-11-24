@@ -37,7 +37,7 @@ public class ChargeFailureLog extends BaseEntity {
     private String gameName;
 
     @Column(name = "status_code")
-    private String statusCode;
+    private int statusCode;
 
     @Column(name = "message")
     private String message;
