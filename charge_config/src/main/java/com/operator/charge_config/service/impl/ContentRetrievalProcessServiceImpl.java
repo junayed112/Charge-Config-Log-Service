@@ -3,7 +3,6 @@ package com.operator.charge_config.service.impl;
 import com.operator.charge_config.base.ApiResponse;
 import com.operator.charge_config.dto.request.ServiceChargeRequestDto;
 import com.operator.charge_config.dto.request.UnlockCodeRequestDto;
-import com.operator.charge_config.dto.response.ServiceChargeResponse;
 import com.operator.charge_config.dto.response.UnlockCodeResponse;
 import com.operator.charge_config.external.Gateway;
 import com.operator.charge_config.model.ChargeConfig;
@@ -12,18 +11,15 @@ import com.operator.charge_config.service.*;
 import com.operator.charge_config.util.Contents;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-public class ContentRetrievalServiceImpl implements ContentRetrievalService {
+public class ContentRetrievalProcessServiceImpl implements ContentRetrievalProcessService {
 
     @Autowired
     private Gateway gatewayService;
@@ -40,8 +36,9 @@ public class ContentRetrievalServiceImpl implements ContentRetrievalService {
 
     private final ExecutorService virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
+    //This method is responsible for retrieving contentList & process them
     @Override
-    public void retrieveContents() {
+    public void retrieveAndProcessContents() {
         System.out.println("Starting content retrieval process using virtual threads : "+ Thread.currentThread());
         List<Contents> contentsList = gatewayService.getContents();
         for (Contents content : contentsList) {
@@ -55,6 +52,8 @@ public class ContentRetrievalServiceImpl implements ContentRetrievalService {
         System.out.println("Process ended");
     }
 
+    // This method is responsible for saving the contents in inbox & retrieve the unlock code
+    //  & after successful retrieval of unlock code then changing is performed & save the status
     private synchronized void processContent(Contents content, String keyword, String gameName) {
         try {
             System.out.println("Enter for processing contents");
@@ -83,7 +82,7 @@ public class ContentRetrievalServiceImpl implements ContentRetrievalService {
 
     @PostConstruct
     public void initiateRetrieval() {
-        virtualThreadExecutor.submit(this::retrieveContents);
+        virtualThreadExecutor.submit(this::retrieveAndProcessContents);
     }
 
     private UnlockCodeRequestDto buildUnlockCodeRequest(Contents contents, String gameName, String keyword) {
