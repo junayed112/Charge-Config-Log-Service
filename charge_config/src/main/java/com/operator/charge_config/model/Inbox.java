@@ -26,7 +26,7 @@ public class Inbox extends BaseEntity {
     @Column(name = "short_code", nullable = false)
     private String shortCode;
 
-    @Column(name = "msisdn", nullable = false, length = 15)
+    @Column(name = "msisdn", nullable = false)
     private String msisdn;
 
     @Column(name = "keyword", nullable = false)

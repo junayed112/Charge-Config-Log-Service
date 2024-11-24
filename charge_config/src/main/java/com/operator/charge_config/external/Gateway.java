@@ -41,8 +41,6 @@ public class Gateway {
         map.add("Content-Type","application/json");
 
         BaseResponse baseResponse = apiClient.get(url, map, BaseResponse.class).block();
-//        List<Contents> contentsList = modelMapper.map(baseResponse.getContents(), List.class);
-//        return contentsList;
         return objectMapper.convertValue(baseResponse.getContents(), new TypeReference<List<Contents>>() {});
 
     }
